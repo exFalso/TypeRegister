@@ -53,21 +53,18 @@ type RunRM instrs initConfig first = Eval (instrs :!: first) instrs initConfig
 
 -- infinite loop
 type InfRM = '[RP Zero Zero]
-type InfInit = '[Zero]
-type Inf = RunRM InfRM InfInit Zero
+type Inf = RunRM InfRM '[Zero] Zero
 
 -- return r[0]
 type RetRM = '[Stop]
-type RetInit = '[Five]
-type Ret = RunRM RetRM RetInit Zero
+type Ret a = RunRM RetRM '[a] Zero
 
 -- r[0] = r[0] + r[1]
 type AddRM = '[ RM One One Two
               , RP Zero Zero
               , Stop
               ]
-type AddInit = '[Two, Three]
-type Add = RunRM AddRM AddInit Zero
+type Add a b = RunRM AddRM '[a, b] Zero
 
 -- r[0] = log2 (r[1])
 type LogRM =  [ Stop
@@ -78,9 +75,33 @@ type LogRM =  [ Stop
               , RM One Six Eight
               , RM One Seven Eight
               , RP Two Five
-              -- , DEBUG
               , RM Two Nine One
               , RP One Eight
               ]
-type LogInit = '[Zero, Nine, Zero]
-type Log = RunRM LogRM LogInit One
+type Log n = RunRM LogRM '[Zero, n, Zero] One
+
+-- "pretty" printing of peano numbers
+data PZero
+data POne
+data PTwo
+data PThree
+data PFour
+data PFive
+data PSix
+data PSeven
+data PEight
+data PNine
+data PTen
+
+type family Peano n
+type instance Peano Zero = PZero
+type instance Peano One = POne
+type instance Peano Two = PTwo
+type instance Peano Three = PThree
+type instance Peano Four = PFour
+type instance Peano Five = PFive
+type instance Peano Six = PSix
+type instance Peano Seven = PSeven
+type instance Peano Eight = PEight
+type instance Peano Nine = PNine
+type instance Peano Ten = PTen
